@@ -69,7 +69,7 @@ function App() {
                         {status !== "passed" && <p>Status: pending</p>}
                         {status === "passed" && (
                             <>
-                                <img src={"/locked.gif"} alt={"passed"} className={"animate-in"}/>
+                                <img src={"/Unlock.gif"} alt={"passed"} className={"animate-in"}/>
                                 <p>Status: passed</p>
                             </>
                         )}
