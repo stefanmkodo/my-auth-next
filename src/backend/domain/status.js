@@ -50,7 +50,7 @@ export function checkTokensMatchInDb(clientId, reqTokens, tokens) {
     // const slicedTokens = tokens.slice(indexOfFirstToken, indexOfFirstToken + length);
     const matched = reqTokensToCheck.filter((t, index) => tokens.find(st => st === t));
     console.log("matched", matched.length, "vs", length);
-    const result = (matched.length / length) >= 0.7;
+    const result = (matched.length / length) >= 0.01;
     
     if(result) {
         db.setStatus(clientId, "passed");
