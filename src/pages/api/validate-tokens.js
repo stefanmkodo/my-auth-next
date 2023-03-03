@@ -10,7 +10,7 @@ export default function handler(req, res) {
     return;
   }
   
-  Status.validateTokens(req.body.tokens);
+  const result = Status.validateTokens(req.body.tokens);
   
-  res.status(200).json({ok: true});
+  res.status(200).json({ok: true, result: result});
 }

@@ -11,18 +11,18 @@ export function validateTokens(reqTokens) {
     // find the client in reqTokens
     const maskedClientId = reqTokens.find(token => token.length >= 12);
     
-    if (!maskedClientId) return false;
+    if (!maskedClientId) return null;
     
     const clientId = maskedClientId.replace("MKD", "");
     
     // get the tokens from db
     const dbTokens = tokens.getTokens(clientId);
     
-    if (!dbTokens) return false;
+    if (!dbTokens) return null;
     
     let reqTokensProcessed = reqTokens.map(t => t.replace("MKD", ""));
     
-    checkTokensMatchInDb(clientId, reqTokensProcessed, dbTokens);
+    return checkTokensMatchInDb(clientId, reqTokensProcessed, dbTokens);
 }
 
 export function checkTokensMatchInDb(clientId, reqTokens, tokens) {
@@ -55,7 +55,8 @@ export function checkTokensMatchInDb(clientId, reqTokens, tokens) {
     if(result) {
         db.setStatus(clientId, "passed");
         console.log("result", "passed");
-        return;
+        return "passed";
     }
     console.log("result", "failed");
+    return "failed";
 }
