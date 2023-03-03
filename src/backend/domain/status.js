@@ -9,7 +9,7 @@ export function checkStatus(clientId) {
 export function validateTokens(reqTokens) {
     
     // find the client in reqTokens
-    const maskedClientId = reqTokens.find(token => token.length >= 12);
+    const maskedClientId = reqTokens.find(token => token.length >= 10);
     
     if (!maskedClientId) return null;
     
