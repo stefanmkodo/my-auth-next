@@ -8,9 +8,9 @@ export default function useClientId () {
     const {data} = useSWR(!clientId ? '/auth' : null, fetcher);
     
     useEffect(() => {
-        const clientId = localStorage.getItem("clientId");
-        if(clientId) {
-            setClientId(clientId);
+        const clientIdFromStorage = localStorage.getItem("clientId");
+        if(clientIdFromStorage) {
+            setClientId(clientIdFromStorage);
         }
     }, []);
     
@@ -19,7 +19,7 @@ export default function useClientId () {
         setClientId(data.clientId);
         localStorage.setItem("clientId", data.clientId);
       }
-    }, [data])
+    }, [clientId, data])
     
     return clientId;
 }
