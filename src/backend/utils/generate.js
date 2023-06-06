@@ -1,6 +1,6 @@
 import cryto from "crypto";
 
-export function generateTokens(clientId) {
+export function generateNewTokens(clientId) {
     return new Array(300).fill("").map((value, index) => {
         if(index % 10 === 0) return clientId;
         return cryto.randomBytes(3).toString('hex')

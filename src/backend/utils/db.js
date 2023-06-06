@@ -2,7 +2,7 @@
 const db = {}
 
 
-export function getTokensByClient(clientId) {
+export function getExistingTokensByClientId(clientId) {
     return db[clientId]?.tokens;
 }
 

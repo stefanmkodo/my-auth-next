@@ -1,12 +1,12 @@
-import {generateTokens} from "../utils/generate.js";
+import {generateNewTokens} from "../utils/generate.js";
 import * as db from "../utils/db.js";
 
 export function getTokens(clientId) {
     
-    let tokens = db.getTokensByClient(clientId);
+    let tokens = db.getExistingTokensByClientId(clientId);
     
     if(!tokens) {
-        tokens = generateTokens(clientId);
+        tokens = generateNewTokens(clientId);
         db.setTokensByClient(clientId, tokens);
     }
     

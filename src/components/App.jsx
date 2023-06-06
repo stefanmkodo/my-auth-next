@@ -20,6 +20,7 @@ function App() {
     const tokens = useTokens();
     const status = useCheckStatus();
     
+    // loading screen once we have tokens and client id
     useEffect(() => {
         if(!tokens || tokens.length < 1) return;
         if(!clientId) return;
@@ -29,10 +30,13 @@ function App() {
         }).then(() => setIsLoading(false));
     }, [clientId, tokens]);
     
+    
+    // sets fps from query string
     useEffect(() => {
         index.current = 0;
         if(getParam('fps')) setFps(getParam('fps'));
     }, [tokens]);
+    
     
     useEffect(() => {
         if (!tokens || tokens.length < 1 || status) return;
@@ -55,6 +59,8 @@ function App() {
         
         return () => stopAnimation();
     }, [tokens, status, fps]);
+    
+    console.log("tokens", tokens);
     
     return (
         <div id={"root"}>
