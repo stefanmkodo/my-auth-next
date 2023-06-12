@@ -1,9 +1,9 @@
 import cryto from "crypto";
 
-export function generateNewTokens(clientId) {
+export function generateNewTokens(clientId, numOfCharacters) {
     return new Array(300).fill("").map((value, index) => {
         if(index % 10 === 0) return clientId;
-        return cryto.randomBytes(3).toString('hex')
+        return cryto.randomBytes(Math.round(numOfCharacters / 2)).toString('hex')
     });
 }
 

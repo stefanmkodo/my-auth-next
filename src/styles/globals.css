@@ -164,6 +164,14 @@ p {
   display: block;
 }
 
+#message {
+  width: 75%;
+  word-wrap: break-word;
+  background-color: #333;
+  padding: 0.5em;
+  border-radius: 4px;
+}
+
 .App {
   min-height: 422px;
   position: relative;

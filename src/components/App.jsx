@@ -11,13 +11,14 @@ import {Header} from "./Header.jsx";
 
 function App() {
     const [fps, setFps] = useState(60);
+    const [numOfCharacters, setNumOfCharacters] = useState(6);
     const [isLoading, setIsLoading] = useState(true);
     const canvasRef = useRef(null);
     const index = useRef(0);
     
     const maxFPS = useFPS();
     const clientId = useClientId();
-    const tokens = useTokens();
+    const tokens = useTokens(numOfCharacters);
     const status = useCheckStatus();
     
     // loading screen once we have tokens and client id
@@ -60,8 +61,6 @@ function App() {
         return () => stopAnimation();
     }, [tokens, status, fps]);
     
-    console.log("tokens", tokens);
-    
     return (
         <div id={"root"}>
             <Header/>
@@ -71,6 +70,7 @@ function App() {
                     <>
                         <p>Client ID: {clientId}</p>
                         <p id="results">Results at {fps}fps | max {maxFPS}</p>
+                        <p id="numOfCharacters">Number of Characters: {numOfCharacters}</p>
                         {status !== "passed" && (<canvas id="canvas" width="300" height="300" ref={canvasRef}></canvas>)}
                         {status !== "passed" && <p>Status: pending</p>}
                         {status === "passed" && (
@@ -82,7 +82,10 @@ function App() {
                         <form>
                             <label htmlFor="fps">FPS </label>
                             <input type="number" name="fps" min={0} defaultValue={fps} onChange={e => setFps(e.currentTarget.value)}/>
+                            <label htmlFor="fps">Number of Characters </label>
+                            <input type="number" name="numOfCharacters" min="0" step="2" defaultValue={numOfCharacters} onChange={e => setNumOfCharacters(e.currentTarget.value)}/>
                         </form>
+                        <div id="message">{JSON.stringify(tokens)}</div>
                     </>
                 )}
             </div>
