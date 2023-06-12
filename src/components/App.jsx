@@ -79,6 +79,10 @@ function App() {
                                 <p>Status: passed</p>
                             </>
                         )}
+                        <form>
+                            <label htmlFor="fps">FPS </label>
+                            <input type="number" name="fps" min={0} defaultValue={fps} onChange={e => setFps(e.currentTarget.value)}/>
+                        </form>
                     </>
                 )}
             </div>
