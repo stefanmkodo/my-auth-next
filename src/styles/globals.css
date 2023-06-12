@@ -172,6 +172,12 @@ p {
   border-radius: 4px;
 }
 
+#configs {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 .App {
   min-height: 422px;
   position: relative;

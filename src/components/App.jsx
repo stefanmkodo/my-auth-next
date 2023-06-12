@@ -70,7 +70,7 @@ function App() {
                     <>
                         <p>Client ID: {clientId}</p>
                         <p id="results">Results at {fps}fps | max {maxFPS}</p>
-                        <p id="numOfCharacters">Number of Characters: {numOfCharacters}</p>
+                        <p>Number of Characters: {numOfCharacters}</p>
                         {status !== "passed" && (<canvas id="canvas" width="300" height="300" ref={canvasRef}></canvas>)}
                         {status !== "passed" && <p>Status: pending</p>}
                         {status === "passed" && (
@@ -79,11 +79,15 @@ function App() {
                                 <p>Status: passed</p>
                             </>
                         )}
-                        <form>
-                            <label htmlFor="fps">FPS </label>
-                            <input type="number" name="fps" min={0} defaultValue={fps} onChange={e => setFps(e.currentTarget.value)}/>
-                            <label htmlFor="fps">Number of Characters </label>
-                            <input type="number" name="numOfCharacters" min="0" step="2" defaultValue={numOfCharacters} onChange={e => setNumOfCharacters(e.currentTarget.value)}/>
+                        <form id="configs">
+                            <div className="fpsInput">
+                                <label htmlFor="fps">FPS </label>
+                                <input type="number" id="fps" name="fps" min={0} defaultValue={fps} onChange={e => setFps(e.currentTarget.value)}/>
+                            </div>
+                            <div className="characterInput">
+                                <label htmlFor="numOfCharacters">Number of Characters </label>
+                                <input type="number" id="numOfCharacters" name="numOfCharacters" min="0" step="2" defaultValue={numOfCharacters} onChange={e => setNumOfCharacters(e.currentTarget.value)}/>
+                            </div>
                         </form>
                         <div id="message">{JSON.stringify(tokens)}</div>
                     </>
