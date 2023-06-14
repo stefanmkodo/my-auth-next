@@ -8,22 +8,25 @@ import useTokens from "../hooks/useTokens.js";
 import useCheckStatus from "../hooks/useCheckStatus.js";
 import {Footer, Loader} from "./Footer.jsx";
 import {Header} from "./Header.jsx";
+import Image from "next/image";
 
 function App() {
     const [fps, setFps] = useState(60);
+    const [numOfCharacters, setNumOfCharacters] = useState(6);
     const [isLoading, setIsLoading] = useState(true);
     const canvasRef = useRef(null);
     const index = useRef(0);
+    const [displayMessage, setDisplayMessage] = useState(false);
     
     const maxFPS = useFPS();
     const clientId = useClientId();
-    const tokens = useTokens();
+    const tokens = useTokens(numOfCharacters);
     const status = useCheckStatus();
     
     // loading screen once we have tokens and client id
     useEffect(() => {
-        if(!tokens || tokens.length < 1) return;
-        if(!clientId) return;
+        if (!tokens || tokens.length < 1) return;
+        if (!clientId) return;
         
         new Promise(resolve => {
             setTimeout(resolve, 2500);
@@ -34,7 +37,7 @@ function App() {
     // sets fps from query string
     useEffect(() => {
         index.current = 0;
-        if(getParam('fps')) setFps(getParam('fps'));
+        if (getParam('fps')) setFps(getParam('fps'));
     }, [tokens]);
     
     
@@ -60,25 +63,44 @@ function App() {
         return () => stopAnimation();
     }, [tokens, status, fps]);
     
-    console.log("tokens", tokens);
-    
     return (
         <div id={"root"}>
             <Header/>
             <div className="App">
-                {isLoading && (<Loader />)}
+                {isLoading && (<Loader/>)}
                 {!isLoading && (
                     <>
                         <p>Client ID: {clientId}</p>
                         <p id="results">Results at {fps}fps | max {maxFPS}</p>
-                        {status !== "passed" && (<canvas id="canvas" width="300" height="300" ref={canvasRef}></canvas>)}
+                        <p>Number of Characters: {numOfCharacters}</p>
+                        {status !== "passed" && (
+                            <canvas id="canvas" width="300" height="300" ref={canvasRef}></canvas>)}
                         {status !== "passed" && <p>Status: pending</p>}
                         {status === "passed" && (
                             <>
-                                <img src={"/Unlock.gif"} alt={"passed"} className={"animate-in"}/>
+                                <Image src={"/Unlock.gif"} alt={"passed"} className={"animate-in"}/>
                                 <p>Status: passed</p>
                             </>
                         )}
+                        
+                        <h2>Config</h2>
+                        <form id="configs">
+                            <div className="fpsInput mb-2">
+                                <label htmlFor="fps">FPS </label>
+                                <input type="number" id="fps" name="fps" min={0} defaultValue={fps}
+                                       onChange={e => setFps(e.currentTarget.value)}/>
+                            </div>
+                            <div className="characterInput mb-2">
+                                <label htmlFor="numOfCharacters">Number of Characters </label>
+                                <input type="number" id="numOfCharacters" name="numOfCharacters" min="0" step="2"
+                                       defaultValue={numOfCharacters}
+                                       onChange={e => setNumOfCharacters(e.currentTarget.value)}/>
+                            </div>
+                        </form>
+                        <div className="messageDropdown">
+                            <div className="messageHeader" onClick={() => setDisplayMessage((prevDisplay) => !prevDisplay)}>Full Message {displayMessage ? "▲" : "▼"}</div>
+                            <div id="message" style={{ display: displayMessage ? "block" : "none" }}>{JSON.stringify(tokens)}</div>
+                        </div>
                     </>
                 )}
             </div>

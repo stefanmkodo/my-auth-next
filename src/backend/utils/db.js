@@ -2,13 +2,17 @@
 const db = {}
 
 
-export function getExistingTokensByClientId(clientId) {
-    return db[clientId]?.tokens;
+export function getExistingTokensByClientId(clientId, numOfCharacters) {
+    if (numOfCharacters === db[clientId]?.numOfCharacters) {
+        return db[clientId]?.tokens;
+    }
+    return null;
 }
 
-export function setTokensByClient(clientId, tokens) {
+export function setTokensByClient(clientId, tokens, numOfCharacters) {
     if(db[clientId] === undefined) db[clientId] = {};
     db[clientId].tokens = tokens;
+    db[clientId].numOfCharacters = numOfCharacters;
 }
 
 export function getStatusByClient(clientId) {

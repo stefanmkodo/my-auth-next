@@ -79,13 +79,23 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #242836;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+html, body {
+  background: #242836;
+  color: #fff;
 }
 
 a {
@@ -135,23 +145,37 @@ button:focus-visible {
 }
 
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-html, body {
-  background: #242836;
-  color: #fff;
-  width:100%;
-  height: 100%;
-}
 p {
   line-height: 1.5;
   margin-bottom: 0.5rem;
 }
 
+input,
+textarea {
+  background: #fff;
+  padding: 3px 6px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 200px
+}
+
+label {
+  display: block;
+  text-align: left;
+  margin-bottom: 0.2rem;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
 #root {
+  background: #242836;
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -162,6 +186,29 @@ p {
   border: 1px solid #000;
   margin: 0 auto;
   display: block;
+}
+
+.messageDropdown {
+  width: 75%;
+  word-wrap: break-word;
+  background-color: #333;
+  padding: 0.5em;
+  border-radius: 4px;
+  margin: 10px;
+}
+
+.messageDropdown .messageHeader {
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.messageDropdown #message {
+  display: none;
+}
+
+#configs {
+  display: flex;
+  flex-direction: column;
 }
 
 .App {
