@@ -15,6 +15,7 @@ function App() {
     const [isLoading, setIsLoading] = useState(true);
     const canvasRef = useRef(null);
     const index = useRef(0);
+    const [displayMessage, setDisplayMessage] = useState(false);
     
     const maxFPS = useFPS();
     const clientId = useClientId();
@@ -89,7 +90,10 @@ function App() {
                                 <input type="number" id="numOfCharacters" name="numOfCharacters" min="0" step="2" defaultValue={numOfCharacters} onChange={e => setNumOfCharacters(e.currentTarget.value)}/>
                             </div>
                         </form>
-                        <div id="message">{JSON.stringify(tokens)}</div>
+                        <div className="messageDropdown">
+                            <div className="messageHeader" onClick={() => setDisplayMessage((prevDisplay) => !prevDisplay)}>Full Message {displayMessage ? "▲" : "▼"}</div>
+                            <div id="message" style={{ display: displayMessage ? "block" : "none" }}>{JSON.stringify(tokens)}</div>
+                        </div>
                     </>
                 )}
             </div>
