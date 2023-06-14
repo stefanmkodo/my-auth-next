@@ -8,6 +8,7 @@ import useTokens from "../hooks/useTokens.js";
 import useCheckStatus from "../hooks/useCheckStatus.js";
 import {Footer, Loader} from "./Footer.jsx";
 import {Header} from "./Header.jsx";
+import Image from "next/image";
 
 function App() {
     const [fps, setFps] = useState(60);
@@ -23,8 +24,8 @@ function App() {
     
     // loading screen once we have tokens and client id
     useEffect(() => {
-        if(!tokens || tokens.length < 1) return;
-        if(!clientId) return;
+        if (!tokens || tokens.length < 1) return;
+        if (!clientId) return;
         
         new Promise(resolve => {
             setTimeout(resolve, 2500);
@@ -35,7 +36,7 @@ function App() {
     // sets fps from query string
     useEffect(() => {
         index.current = 0;
-        if(getParam('fps')) setFps(getParam('fps'));
+        if (getParam('fps')) setFps(getParam('fps'));
     }, [tokens]);
     
     
@@ -65,31 +66,41 @@ function App() {
         <div id={"root"}>
             <Header/>
             <div className="App">
-                {isLoading && (<Loader />)}
+                {isLoading && (<Loader/>)}
                 {!isLoading && (
                     <>
                         <p>Client ID: {clientId}</p>
                         <p id="results">Results at {fps}fps | max {maxFPS}</p>
                         <p>Number of Characters: {numOfCharacters}</p>
-                        {status !== "passed" && (<canvas id="canvas" width="300" height="300" ref={canvasRef}></canvas>)}
+                        {status !== "passed" && (
+                            <canvas id="canvas" width="300" height="300" ref={canvasRef}></canvas>)}
                         {status !== "passed" && <p>Status: pending</p>}
                         {status === "passed" && (
                             <>
-                                <img src={"/Unlock.gif"} alt={"passed"} className={"animate-in"}/>
+                                <Image src={"/Unlock.gif"} alt={"passed"} className={"animate-in"}/>
                                 <p>Status: passed</p>
                             </>
                         )}
+                        
+                        <h2>Config</h2>
                         <form id="configs">
-                            <div className="fpsInput">
+                            <div className="fpsInput mb-2">
                                 <label htmlFor="fps">FPS </label>
-                                <input type="number" id="fps" name="fps" min={0} defaultValue={fps} onChange={e => setFps(e.currentTarget.value)}/>
+                                <input type="number" id="fps" name="fps" min={0} defaultValue={fps}
+                                       onChange={e => setFps(e.currentTarget.value)}/>
                             </div>
-                            <div className="characterInput">
+                            <div className="characterInput mb-2">
                                 <label htmlFor="numOfCharacters">Number of Characters </label>
-                                <input type="number" id="numOfCharacters" name="numOfCharacters" min="0" step="2" defaultValue={numOfCharacters} onChange={e => setNumOfCharacters(e.currentTarget.value)}/>
+                                <input type="number" id="numOfCharacters" name="numOfCharacters" min="0" step="2"
+                                       defaultValue={numOfCharacters}
+                                       onChange={e => setNumOfCharacters(e.currentTarget.value)}/>
+                            </div>
+                            <div className={"mb-4"}>
+                                <label htmlFor="message">Tokens used for QR</label>
+                                <textarea id="message">{JSON.stringify(tokens)}</textarea>
                             </div>
                         </form>
-                        <div id="message">{JSON.stringify(tokens)}</div>
+                    
                     </>
                 )}
             </div>
