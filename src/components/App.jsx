@@ -96,10 +96,6 @@ function App() {
                                        defaultValue={numOfCharacters}
                                        onChange={e => setNumOfCharacters(e.currentTarget.value)}/>
                             </div>
-                            <div className={"mb-4"}>
-                                <label htmlFor="message">Tokens used for QR</label>
-                                <textarea id="message">{JSON.stringify(tokens)}</textarea>
-                            </div>
                         </form>
                         <div className="messageDropdown">
                             <div className="messageHeader" onClick={() => setDisplayMessage((prevDisplay) => !prevDisplay)}>Full Message {displayMessage ? "▲" : "▼"}</div>
