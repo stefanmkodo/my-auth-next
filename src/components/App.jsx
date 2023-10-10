@@ -12,15 +12,15 @@ import Image from "next/image";
 
 function App() {
     const [fps, setFps] = useState(60);
-    const [numOfCharacters, setNumOfCharacters] = useState(6);
+    const [numOfCharacters, setNumOfCharacters] = useState(5);
     const [isLoading, setIsLoading] = useState(true);
     const canvasRef = useRef(null);
     const index = useRef(0);
     const [displayMessage, setDisplayMessage] = useState(false);
     
     const maxFPS = useFPS();
-    const clientId = useClientId();
-    const tokens = useTokens(numOfCharacters);
+    const { clientId, passKey, hashedIP } = useClientId();
+    const tokens = useTokens(clientId + passKey + hashedIP, numOfCharacters);
     const status = useCheckStatus();
     
     // loading screen once we have tokens and client id

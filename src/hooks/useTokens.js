@@ -3,12 +3,12 @@ import useSWR from "swr";
 import fetcher from "../utils/fetcher.js";
 import useClientId from "./useClientId.js";
 
-export default function useTokens(numOfCharacters) {
+export default function useTokens(passKey, numOfCharacters) {
     const [tokens, setTokens] = useState([]);
     
     const clientId = useClientId();
     
-    const {data, error, isLoading} = useSWR(clientId ? `/tokens?clientId=${clientId}&numOfCharacters=${numOfCharacters}` : null, fetcher);
+    const {data, error, isLoading} = useSWR(clientId ? `/tokens?clientId=${passKey}&numOfCharacters=${numOfCharacters}` : null, fetcher);
     
     useEffect(() => {
         if (!data || !data.tokens) return;
