@@ -17,7 +17,9 @@ function App() {
     const canvasRef = useRef(null);
     const index = useRef(0);
     const [displayMessage, setDisplayMessage] = useState(false);
-    
+    const [isCycling, setIsCycling] = useState(false);
+    const [noOfCycles, setNoOfCycles] = useState(2);
+
     const maxFPS = useFPS();
     const { clientId, passKey, hashedIP } = useClientId();
     const tokens = useTokens(clientId + passKey + hashedIP, numOfCharacters);
@@ -43,9 +45,10 @@ function App() {
     
     useEffect(() => {
         if (!tokens || tokens.length < 1 || status) return;
+        let currentCycle = 1;
         
         function drawQRCode() {
-            let value = `MKD${tokens[index.current]}`;
+            let value = tokens[index.current];
             QRCode.toCanvas(canvasRef.current, value, {
                 version: 1,
                 width: 300
@@ -53,15 +56,28 @@ function App() {
                 if (error) {
                     console.error(error);
                 } else {
-                    index.current = (index.current + 1) % tokens.length;
+                    console.log({ currentCycle, noOfCycles, index: index.current, noOfTokens: tokens.length })
+                    if (currentCycle === noOfCycles && index.current === tokens.length - 1) {
+                        console.log("END")
+                        stopAnimation();
+                        index.current = 0;
+                        setIsCycling(false);
+                    } else {
+                        if (currentCycle < noOfCycles && index.current === tokens.length - 1) {
+                            currentCycle++;
+                        }
+                        index.current = (index.current + 1) % tokens.length;
+                    }
                 }
             });
         }
-        
-        startAnimating(fps, drawQRCode);
-        
+
+        if (isCycling) {
+            startAnimating(fps ,drawQRCode);
+        }
+
         return () => stopAnimation();
-    }, [tokens, status, fps]);
+    }, [tokens, status, fps, isCycling]);
     
     return (
         <div id={"root"}>
@@ -73,7 +89,14 @@ function App() {
                         <p>Client ID: {clientId}</p>
                         <p id="results">Results at {fps}fps | max {maxFPS}</p>
                         <p>Number of Characters: {numOfCharacters}</p>
-                        {status !== "passed" && (
+                        {!isCycling && (
+                            <>
+                                <label htmlFor={"number-of-cycles-input"}>Number of cycles:</label>
+                                <input id={"number-of-cycles-input"} type={"number"} value={noOfCycles} onChange={(e) => setNoOfCycles(+e.target.value)} />
+                                <button onClick={() => setIsCycling(true)}>Start</button>
+                            </>
+                        )}
+                        {status !== "passed" && isCycling && (
                             <canvas id="canvas" width="300" height="300" ref={canvasRef}></canvas>)}
                         {status !== "passed" && <p>Status: pending</p>}
                         {status === "passed" && (
