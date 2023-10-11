@@ -53,20 +53,24 @@ function App() {
                 version: 1,
                 width: 300
             }, function (error) {
+                const isFinalSection = index.current === tokens.length - 1;
+                const resetIndex = () => index.current = 0;
+                const continueLooping = () => {
+                    index.current = (index.current + 1) % tokens.length;
+                }
+
                 if (error) {
                     console.error(error);
                 } else {
-                    console.log({ currentCycle, noOfCycles, index: index.current, noOfTokens: tokens.length })
-                    if (currentCycle === noOfCycles && index.current === tokens.length - 1) {
-                        console.log("END")
+                    if (currentCycle === noOfCycles && isFinalSection) {
                         stopAnimation();
-                        index.current = 0;
+                        resetIndex();
                         setIsCycling(false);
                     } else {
-                        if (currentCycle < noOfCycles && index.current === tokens.length - 1) {
+                        if (currentCycle < noOfCycles && isFinalSection) {
                             currentCycle++;
                         }
-                        index.current = (index.current + 1) % tokens.length;
+                        continueLooping();
                     }
                 }
             });
