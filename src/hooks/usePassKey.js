@@ -2,7 +2,7 @@ import useSWR from "swr";
 import fetcher from "../utils/fetcher.js";
 import {useEffect, useState} from "react";
 
-export default function useClientId () {
+export default function usePassKey () {
     const [clientId, setClientId] = useState(null);
     const [passKey, setPassKey] = useState(null);
     const [hashedIP, setHashedIP] = useState(null);

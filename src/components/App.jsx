@@ -3,7 +3,7 @@ import {startAnimating, stopAnimation} from "@/utils/animate";
 import QRCode from 'qrcode';
 import useFPS from "../hooks/useFPS.js";
 import getParam from "../utils/queryString.js";
-import useClientId from "../hooks/useClientId.js";
+import usePassKey from "../hooks/usePassKey.js";
 import useTokens from "../hooks/useTokens.js";
 import useCheckStatus from "../hooks/useCheckStatus.js";
 import {Footer, Loader} from "./Footer.jsx";
@@ -21,7 +21,7 @@ function App() {
     const [noOfCycles, setNoOfCycles] = useState(2);
 
     const maxFPS = useFPS();
-    const { clientId, passKey, hashedIP } = useClientId();
+    const { clientId, passKey, hashedIP } = usePassKey();
     const tokens = useTokens(clientId + passKey + hashedIP, numOfCharacters);
     const status = useCheckStatus();
     
