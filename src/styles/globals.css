@@ -147,9 +147,9 @@ label {
 .messageDropdown {
   width: 75%;
   word-wrap: break-word;
-  background-color: #333;
+  background-color: #2b3042;
   padding: 0.5em;
-  border-radius: 4px;
+  border-radius: 20px;
   margin: 10px;
 }
 
@@ -160,6 +160,16 @@ label {
 
 .messageDropdown #message {
   display: none;
+}
+
+.qrCodeContainer {
+  border-radius: 20px;
+  background-color: #2b3042;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 350px;
+  height: 350px;
 }
 
 #configs {

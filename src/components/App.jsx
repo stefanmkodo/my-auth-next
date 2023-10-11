@@ -93,15 +93,10 @@ function App() {
                         <p>Client ID: {clientId}</p>
                         <p id="results">Results at {fps}fps | max {maxFPS}</p>
                         <p>Number of Characters: {numOfCharacters}</p>
-                        {!isCycling && (
-                            <>
-                                <label htmlFor={"number-of-cycles-input"}>Number of cycles:</label>
-                                <input id={"number-of-cycles-input"} type={"number"} value={noOfCycles} onChange={(e) => setNoOfCycles(+e.target.value)} />
-                                <button onClick={() => setIsCycling(true)}>Start</button>
-                            </>
-                        )}
-                        {status !== "passed" && isCycling && (
-                            <canvas id="canvas" width="300" height="300" ref={canvasRef}></canvas>)}
+                        <div className={"qrCodeContainer"}>
+                            {status !== "passed" && isCycling && (
+                                <canvas id="canvas" width="300" height="300" ref={canvasRef}></canvas>)}
+                        </div>
                         {status !== "passed" && <p>Status: pending</p>}
                         {status === "passed" && (
                             <>
@@ -109,7 +104,13 @@ function App() {
                                 <p>Status: passed</p>
                             </>
                         )}
-                        
+                        {!isCycling && (
+                            <>
+                                <label htmlFor={"number-of-cycles-input"}>Number of cycles:</label>
+                                <input id={"number-of-cycles-input"} type={"number"} value={noOfCycles} onChange={(e) => setNoOfCycles(+e.target.value)} />
+                                <button onClick={() => setIsCycling(true)}>Start</button>
+                            </>
+                        )}
                         <h2>Config</h2>
                         <form id="configs">
                             <div className="fpsInput mb-2">
