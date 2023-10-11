@@ -7,7 +7,7 @@ export default function usePassKey () {
     const [passKey, setPassKey] = useState(null);
     const [hashedIP, setHashedIP] = useState(null);
 
-    const {data} = useSWR(!clientId ? '/auth' : null, fetcher);
+    const {data} = useSWR((!clientId || !passKey || !hashedIP) ? '/auth' : null, fetcher);
 
     useEffect(() => {
         const clientIdFromStorage = localStorage.getItem("clientId");
