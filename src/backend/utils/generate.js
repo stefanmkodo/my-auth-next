@@ -1,12 +1,16 @@
-import cryto from "crypto";
+import crypto from "crypto";
 
 export function generateNewTokens(clientId, numOfCharacters) {
-    return new Array(300).fill("").map((value, index) => {
-        if(index % 10 === 0) return clientId;
-        return cryto.randomBytes(Math.round(numOfCharacters / 2)).toString('hex')
+    return new Array(44).fill("").map((value, index) => {
+        const currentPointer = index * numOfCharacters;
+        return clientId.substring(currentPointer, currentPointer + +numOfCharacters) + index.toString().padStart(2, "0");
     });
 }
 
 export function generateClientId() {
-    return cryto.randomBytes(5).toString('hex');
+    return crypto.randomBytes(60).toString('hex');
+}
+
+export function generatePassKey() {
+    return crypto.randomUUID();
 }

@@ -3,7 +3,7 @@ import {startAnimating, stopAnimation} from "@/utils/animate";
 import QRCode from 'qrcode';
 import useFPS from "../hooks/useFPS.js";
 import getParam from "../utils/queryString.js";
-import useClientId from "../hooks/useClientId.js";
+import usePassKey from "../hooks/usePassKey.js";
 import useTokens from "../hooks/useTokens.js";
 import useCheckStatus from "../hooks/useCheckStatus.js";
 import {Footer, Loader} from "./Footer.jsx";
@@ -12,15 +12,17 @@ import Image from "next/image";
 
 function App() {
     const [fps, setFps] = useState(60);
-    const [numOfCharacters, setNumOfCharacters] = useState(6);
+    const [numOfCharacters, setNumOfCharacters] = useState(5);
     const [isLoading, setIsLoading] = useState(true);
     const canvasRef = useRef(null);
     const index = useRef(0);
     const [displayMessage, setDisplayMessage] = useState(false);
-    
+    const [isCycling, setIsCycling] = useState(false);
+    const [noOfCycles, setNoOfCycles] = useState(2);
+
     const maxFPS = useFPS();
-    const clientId = useClientId();
-    const tokens = useTokens(numOfCharacters);
+    const { clientId, passKey, hashedIP } = usePassKey();
+    const tokens = useTokens(clientId + passKey + hashedIP, numOfCharacters);
     const status = useCheckStatus();
     
     // loading screen once we have tokens and client id
@@ -43,25 +45,43 @@ function App() {
     
     useEffect(() => {
         if (!tokens || tokens.length < 1 || status) return;
+        let currentCycle = 1;
         
         function drawQRCode() {
-            let value = `MKD${tokens[index.current]}`;
+            let value = tokens[index.current];
             QRCode.toCanvas(canvasRef.current, value, {
                 version: 1,
                 width: 300
             }, function (error) {
+                const isFinalSection = index.current === tokens.length - 1;
+                const resetIndex = () => index.current = 0;
+                const continueLooping = () => {
+                    index.current = (index.current + 1) % tokens.length;
+                }
+
                 if (error) {
                     console.error(error);
                 } else {
-                    index.current = (index.current + 1) % tokens.length;
+                    if (currentCycle === noOfCycles && isFinalSection) {
+                        stopAnimation();
+                        resetIndex();
+                        setIsCycling(false);
+                    } else {
+                        if (currentCycle < noOfCycles && isFinalSection) {
+                            currentCycle++;
+                        }
+                        continueLooping();
+                    }
                 }
             });
         }
-        
-        startAnimating(fps, drawQRCode);
-        
+
+        if (isCycling) {
+            startAnimating(fps ,drawQRCode);
+        }
+
         return () => stopAnimation();
-    }, [tokens, status, fps]);
+    }, [tokens, status, fps, isCycling]);
     
     return (
         <div id={"root"}>
@@ -73,8 +93,10 @@ function App() {
                         <p>Client ID: {clientId}</p>
                         <p id="results">Results at {fps}fps | max {maxFPS}</p>
                         <p>Number of Characters: {numOfCharacters}</p>
-                        {status !== "passed" && (
-                            <canvas id="canvas" width="300" height="300" ref={canvasRef}></canvas>)}
+                        <div className={"qrCodeContainer"}>
+                            {status !== "passed" && isCycling && (
+                                <canvas id="canvas" width="300" height="300" ref={canvasRef}></canvas>)}
+                        </div>
                         {status !== "passed" && <p>Status: pending</p>}
                         {status === "passed" && (
                             <>
@@ -82,7 +104,13 @@ function App() {
                                 <p>Status: passed</p>
                             </>
                         )}
-                        
+                        {!isCycling && (
+                            <>
+                                <label htmlFor={"number-of-cycles-input"}>Number of cycles:</label>
+                                <input id={"number-of-cycles-input"} type={"number"} value={noOfCycles} onChange={(e) => setNoOfCycles(+e.target.value)} />
+                                <button onClick={() => setIsCycling(true)}>Start</button>
+                            </>
+                        )}
                         <h2>Config</h2>
                         <form id="configs">
                             <div className="fpsInput mb-2">
