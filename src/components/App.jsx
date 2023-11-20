@@ -19,11 +19,19 @@ function App() {
     const [displayMessage, setDisplayMessage] = useState(false);
     const [isCycling, setIsCycling] = useState(false);
     const [noOfCycles, setNoOfCycles] = useState(2);
+    const [targetId, setTargetId] = useState(0);
 
     const maxFPS = useFPS();
     const { clientId, passKey, hashedIP } = usePassKey();
-    const tokens = useTokens(clientId + passKey + hashedIP, numOfCharacters);
+    const combinedInfo = combine(clientId, passKey, hashedIP);
+    const tokens = useTokens(combinedInfo, numOfCharacters);
     const status = useCheckStatus();
+
+    useEffect(() => {
+        if (!isCycling) {
+            setTargetId(Math.floor(Math.random() * 4));
+        }
+    }, [isCycling])
     
     // loading screen once we have tokens and client id
     useEffect(() => {
@@ -94,6 +102,7 @@ function App() {
                         <p id="results">Results at {fps}fps | max {maxFPS}</p>
                         <p>Number of Characters: {numOfCharacters}</p>
                         <div className={"qrCodeContainer"}>
+                            <div className={`frameTarget-${targetId} corners-border`} />
                             {status !== "passed" && isCycling && (
                                 <canvas id="canvas" width="300" height="300" ref={canvasRef}></canvas>)}
                         </div>
@@ -139,6 +148,25 @@ function App() {
 
 export default App;
 
+function combine(clientId, passKey, hashedIp) {
+    if (clientId && passKey && hashedIp) {
+        const clientIdInTwo = splitStringInHalf(clientId);
+        const passKeyInTwo = splitStringInHalf(passKey);
+        const hashedIpInTwo = splitStringInHalf(hashedIp.toLowerCase());
+
+        const sections = clientIdInTwo.concat(passKeyInTwo.concat(hashedIpInTwo))
+
+        return sections[0] + sections[2] + sections[4] + sections[1] + sections[3] + sections[5];
+    }
+    return null;
+}
+
+function splitStringInHalf(inputString) {
+    const middleIndex = Math.floor(inputString.length / 2);
+    const firstSection = inputString.slice(0, middleIndex);
+    const secondSection = inputString.slice(middleIndex);
+    return [firstSection, secondSection];
+}
 
 function drawSomething() {
     const canvas = canvasRef.current;
