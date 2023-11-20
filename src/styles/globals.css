@@ -167,8 +167,9 @@ label {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 350px;
-  height: 350px;
+  width: 700px;
+  height: 600px;
+  position: relative;
 }
 
 #configs {
@@ -241,4 +242,28 @@ label {
     transform: rotate(720deg);
     scale: 1;
   }
+}
+
+.corners-border {
+  border-image-source: url('/borderImage.svg');
+  border-image-slice: 50%;
+  border-image-width: 2.5em;
+}
+
+.frameTarget-1 {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+}
+
+.frameTarget-2 {
+  position: absolute;
+  width: 500px;
+  height: 350px;
+}
+
+.frameTarget-3 {
+  position: absolute;
+  width: 350px;
+  height: 500px;
 }
