@@ -10,6 +10,8 @@ import {Footer, Loader} from "./Footer.jsx";
 import {Header} from "./Header.jsx";
 import Image from "next/image";
 
+const BRACKET_TYPES = ["None", "Square", "Wide Rectangle", "Tall Rectangle"]
+
 function App() {
     const [fps, setFps] = useState(60);
     const [numOfCharacters, setNumOfCharacters] = useState(5);
@@ -27,12 +29,6 @@ function App() {
     const tokens = useTokens(combinedInfo, numOfCharacters);
     const status = useCheckStatus();
 
-    useEffect(() => {
-        if (!isCycling) {
-            setTargetId(Math.floor(Math.random() * 4));
-        }
-    }, [isCycling])
-    
     // loading screen once we have tokens and client id
     useEffect(() => {
         if (!tokens || tokens.length < 1) return;
@@ -124,19 +120,30 @@ function App() {
                         <form id="configs">
                             <div className="fpsInput mb-2">
                                 <label htmlFor="fps">FPS </label>
-                                <input type="number" id="fps" name="fps" min={0} defaultValue={fps}
+                                <input className={"config"} type="number" id="fps" name="fps" min={0} defaultValue={fps}
                                        onChange={e => setFps(e.currentTarget.value)}/>
                             </div>
                             <div className="characterInput mb-2">
                                 <label htmlFor="numOfCharacters">Number of Characters </label>
-                                <input type="number" id="numOfCharacters" name="numOfCharacters" min="0" step="2"
+                                <input className={"config"} type="number" id="numOfCharacters" name="numOfCharacters" min="0" step="2"
                                        defaultValue={numOfCharacters}
                                        onChange={e => setNumOfCharacters(e.currentTarget.value)}/>
                             </div>
+                            <div className="bracketInput mb-2">
+                                <label htmlFor="bracketStyle">Brackets </label>
+                                <select className={"config"} id="bracketStyle" onChange={(e) => setTargetId(e.target.value)}>
+                                    {BRACKET_TYPES.map((value, index) => {
+                                        return <option key={value} value={index}>{value}</option>
+                                    })}
+                                </select>
+                            </div>
                         </form>
                         <div className="messageDropdown">
-                            <div className="messageHeader" onClick={() => setDisplayMessage((prevDisplay) => !prevDisplay)}>Full Message {displayMessage ? "▲" : "▼"}</div>
-                            <div id="message" style={{ display: displayMessage ? "block" : "none" }}>{JSON.stringify(tokens)}</div>
+                            <div className="messageHeader"
+                                 onClick={() => setDisplayMessage((prevDisplay) => !prevDisplay)}>Full
+                                Message {displayMessage ? "▲" : "▼"}</div>
+                            <div id="message"
+                                 style={{display: displayMessage ? "block" : "none"}}>{JSON.stringify(tokens)}</div>
                         </div>
                     </>
                 )}

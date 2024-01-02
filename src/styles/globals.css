@@ -105,10 +105,16 @@ p {
 }
 
 input,
+select,
 textarea {
   background: #fff;
   padding: 3px 6px;
   color: black;
+  border-radius: 5px;
+}
+
+.config {
+  width: 100%;
 }
 
 textarea {
