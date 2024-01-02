@@ -138,7 +138,6 @@ label {
 }
 
 #canvas {
-  border: 1px solid #000;
   margin: 0 auto;
   display: block;
 }
@@ -163,7 +162,7 @@ label {
 
 .qrCodeContainer {
   border-radius: 20px;
-  background-color: #2b3042;
+  background-color: white;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -246,7 +245,7 @@ label {
 
 .corners-border {
   border-image-source: url('/borderImage.svg');
-  border-image-slice: 50%;
+  border-image-slice: 51%;
   border-image-width: 2.5em;
 }
 
