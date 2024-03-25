@@ -1,0 +1,39 @@
+.audioViewContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.binaryStringContainer {
+    background-color: #2b3042;
+    padding: 8px 16px;
+    border-radius: 8px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 16px;
+    justify-content: center;
+}
+
+.binaryString {
+    font-size: large;
+    font-family: monospace;
+    word-wrap: anywhere;
+}
+
+.binaryLabel {
+    flex-shrink: 0
+}
+
+.inputContainer {
+    margin-bottom: 8px;
+}
+
+.button {
+    margin: 20px 0;
+    background-color: #EE1753;
+}
+
+.button:disabled {
+    background-color: grey;
+}

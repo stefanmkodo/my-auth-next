@@ -1,0 +1,27 @@
+.tabSelector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    margin: 20px 0;
+}
+
+.tabSelectorItem {
+    background-color: #2b3042;
+    padding: 2px 8px;
+    border-bottom: 2px transparent solid;
+}
+
+.tabSelectorItem.active {
+    background-color: #EE1753;
+    font-weight: bold;
+}
+
+.tabSelectorItem.active:hover {
+    border-bottom: 2px white solid;
+}
+
+.tabSelectorItem:hover {
+    cursor: pointer;
+    border-bottom: 2px #EE1753 solid;
+}
