@@ -4,6 +4,7 @@ import {Footer} from "./Footer.jsx";
 import {Header} from "./Header.jsx";
 import TabSelector from "@/components/TabSelector";
 import QRCodeView from "@/components/QRCodeView";
+import AudioView from "@/components/AudioView";
 
 function App() {
     const [view, setView] = useState("QR Codes");
@@ -14,6 +15,7 @@ function App() {
             <Header/>
             <TabSelector items={["QR Codes", "Audio"]} currentTab={view} onSelect={setView} />
             {view === "QR Codes" && <QRCodeView status={status} />}
+            {view === "Audio" && <AudioView />}
             <Footer status={status}/>
         </div>
     )
