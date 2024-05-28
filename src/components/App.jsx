@@ -5,6 +5,7 @@ import {Header} from "./Header.jsx";
 import TabSelector from "@/components/TabSelector";
 import QRCodeView from "@/components/QRCodeView";
 import AudioView from "@/components/AudioView";
+import BluetoothView from "@/components/BluetoothView";
 
 function App() {
     const [view, setView] = useState("QR Codes");
@@ -13,9 +14,10 @@ function App() {
     return (
         <div id={"root"}>
             <Header/>
-            <TabSelector items={["QR Codes", "Audio"]} currentTab={view} onSelect={setView} />
+            <TabSelector items={["QR Codes", "Audio", "Bluetooth"]} currentTab={view} onSelect={setView} />
             {view === "QR Codes" && <QRCodeView status={status} />}
             {view === "Audio" && <AudioView />}
+            {view === "Bluetooth" && <BluetoothView />}
             <Footer status={status}/>
         </div>
     )
