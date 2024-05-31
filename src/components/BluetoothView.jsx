@@ -12,6 +12,7 @@ function BluetoothView() {
         setGattServer(e.target.gatt);
         setGattService(null);
         setGattCharacteristic(null);
+        setCharacteristicValues([]);
     }
 
     function onCharacteristicChanged(e) {
@@ -117,8 +118,26 @@ function BluetoothView() {
                         <span className={`${styles.notConnected} ${styles.btListItemValue}`}>Not Connected</span>}</li>
                 </ul>
             </div>}
+            {gattService && <div className={styles.btListContainer}>
+                <ul className={styles.btList}>
+                    <li className={styles.btListHeading}>GATT Service Information</li>
+                    <li className={styles.btListItem}><span className={styles.btListItemValue}>UUID:</span><span
+                        className={styles.btListItemValue}>{gattService.uuid}</span>
+                    </li>
+                </ul>
+            </div>}
             {gattCharacteristic && <div>
-                <p><span>Service UUID:</span><span>{gattCharacteristic.uuid}</span></p><br/>
+                <div className={styles.btListContainer}>
+                    <ul className={styles.btList}>
+                        <li className={styles.btListHeading}>GATT Characteristic Information</li>
+                        <li className={styles.btListItem}><span className={styles.btListItemValue}>UUID:</span><span
+                            className={styles.btListItemValue}>{gattCharacteristic.uuid}</span>
+                        </li>
+                        <li className={styles.btListItem}><span className={styles.btListItemValue}>Value:</span><span
+                            className={styles.btListItemValue}>{decodeCharacteristicValue(gattCharacteristic.value)}</span>
+                        </li>
+                    </ul>
+                </div>
                 <div className={styles.btListContainer}>
                     <ul className={styles.btList}>
                         <li className={styles.btListHeading}>Value log</li>
