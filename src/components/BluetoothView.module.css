@@ -1,0 +1,32 @@
+.btListContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.btListHeading {
+    background: #EE1753;
+    font-weight: bold;
+    list-style: none;
+}
+
+.btList {
+    margin-bottom: 20px;
+    width: 400px;
+}
+
+.btListItem {
+    display: flex;
+    background: #373a52;
+    list-style: none;
+    padding: 2px 8px;
+    width: 100%;
+}
+
+.btListItemTimestamp, .btListItemValue {
+    flex: 1 1 0;
+}
+
+.btListItem:nth-child(odd) {
+    background: #1e2031;
+}
