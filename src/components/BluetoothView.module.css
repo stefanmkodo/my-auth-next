@@ -30,3 +30,8 @@
 .btListItem:nth-child(odd) {
     background: #1e2031;
 }
+
+.button {
+    margin: 20px 0;
+    background-color: #EE1753;
+}

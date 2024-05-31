@@ -114,7 +114,7 @@ function BluetoothView() {
                 </div>
             </div>}
             {!gattServer &&
-                <button disabled={isPairing} className={styles.button} onClick={onConnectClick}>Connect to nearby
+                <button className={styles.button} onClick={onConnectClick}>Connect to nearby
                     device</button>}
             {gattServer &&
                 <button className={styles.button} onClick={onDisconnectClick}>Disconnect</button>}
