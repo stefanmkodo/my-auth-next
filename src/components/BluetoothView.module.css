@@ -35,3 +35,11 @@
     margin: 20px 0;
     background-color: #EE1753;
 }
+
+.connected {
+    color: lawngreen;
+}
+
+.notConnected {
+    color: red;
+}

@@ -1,17 +1,18 @@
 import React, {useEffect, useState} from "react";
 import styles from "@/components/BluetoothView.module.css";
 
-function onServerDisconnect(e) {
-    console.log(e);
-}
-
 function BluetoothView() {
-    const [isPairing, setIsPairing] = useState(false);
+    const [error, setError] = useState(null);
     const [gattServer, setGattServer] = useState(null);
     const [gattService, setGattService] = useState(null);
     const [gattCharacteristic, setGattCharacteristic] = useState(null);
     const [characteristicValues, setCharacteristicValues] = useState([]);
-    const [result, setResult] = useState("");
+
+    function onServerDisconnect(e) {
+        setGattServer(e.target.gatt);
+        setGattService(null);
+        setGattCharacteristic(null);
+    }
 
     function onCharacteristicChanged(e) {
         const now = new Date();
@@ -33,9 +34,7 @@ function BluetoothView() {
 
 
             return () => {
-                gattCharacteristic.stopNotifications().then(() => {
-                    gattCharacteristic.removeEventListener("characteristicvaluechanged", onCharacteristicChanged);
-                })
+                gattCharacteristic.removeEventListener("characteristicvaluechanged", onCharacteristicChanged);
             }
         }
     }, [gattCharacteristic]);
@@ -49,17 +48,19 @@ function BluetoothView() {
     }, [gattService]);
 
     useEffect(() => {
-        if (gattServer && gattServer.connected) {
-            setResult(`Successfully connected to ${gattServer.device.name}`);
-            gattServer.getPrimaryService("0000aaa0-0000-1000-8000-aabbccddeeff").then((service) => {
-                setGattService(service);
-            })
-            console.log(gattServer.device);
-            gattServer.device.addEventListener("ongattserverdisconnected", onServerDisconnect);
+        if (gattServer) {
+            if (gattServer.connected) {
+                gattServer.getPrimaryService("0000aaa0-0000-1000-8000-aabbccddeeff").then((service) => {
+                    setGattService(service);
+                })
+                gattServer.device.addEventListener("gattserverdisconnected", onServerDisconnect);
+            } else {
+                gattServer.device.removeEventListener("gattserverdisconnected", onServerDisconnect);
+            }
         }
         return () => {
             if (gattServer) {
-                gattServer.device.removeEventListener("ongattserverdisconnected", onServerDisconnect);
+                gattServer.device.removeEventListener("gattserverdisconnected", onServerDisconnect);
             }
         }
     }, [gattServer]);
@@ -67,24 +68,29 @@ function BluetoothView() {
     async function onConnectClick() {
         try {
             if (navigator.bluetooth) {
-                const device = await navigator.bluetooth.requestDevice({
-                    acceptAllDevices: true,
-                    optionalServices: ["0000aaa0-0000-1000-8000-aabbccddeeff"]
-                });
-                const server = await device.gatt.connect();
-                setGattServer(server);
+                if (!gattServer) {
+                    const device = await navigator.bluetooth.requestDevice({
+                        acceptAllDevices: true,
+                        optionalServices: ["0000aaa0-0000-1000-8000-aabbccddeeff"]
+                    });
+                    const server = await device.gatt.connect();
+                    setGattServer(server);
+                } else {
+                    setGattServer(null);
+                    const server = await gattServer.connect();
+                    setGattServer(server);
+                }
             } else {
-                setResult("Bluetooth not supported");
+                setError("Bluetooth not supported");
             }
         } catch (e) {
-            setResult(e.message);
+            setError(e.message);
         }
     }
 
-    function onDisconnectClick() {
+    async function onDisconnectClick() {
         if (gattServer && gattServer.connected) {
-            gattServer.disconnect();
-            setGattServer(null);
+            await gattServer.disconnect();
         }
     }
 
@@ -98,7 +104,19 @@ function BluetoothView() {
 
     return (
         <>
-            {result !== "" && <p>{result}</p>}
+            {error && <p>{error}</p>}
+            {gattServer && <div className={styles.btListContainer}>
+                <ul className={styles.btList}>
+                    <li className={styles.btListHeading}>GATT Server Information</li>
+                    <li className={styles.btListItem}><span className={styles.btListItemValue}>Device:</span><span
+                        className={styles.btListItemValue}>{gattServer.device.name}</span>
+                    </li>
+                    <li className={styles.btListItem}><span
+                        className={styles.btListItemValue}>Status:</span>{gattServer.connected ?
+                        <span className={`${styles.connected} ${styles.btListItemValue}`}>Connected</span> :
+                        <span className={`${styles.notConnected} ${styles.btListItemValue}`}>Not Connected</span>}</li>
+                </ul>
+            </div>}
             {gattCharacteristic && <div>
                 <p><span>Service UUID:</span><span>{gattCharacteristic.uuid}</span></p><br/>
                 <div className={styles.btListContainer}>
@@ -106,8 +124,8 @@ function BluetoothView() {
                         <li className={styles.btListHeading}>Value log</li>
                         {characteristicValues.length > 0 ? characteristicValues.map((value) => <li
                                 key={value.timestamp} className={styles.btListItem}>
-                            <span className={styles.btListItemTimestamp}>{value.timestamp}</span>
-                            <span className={styles.btListItemValue}>{value.value}</span>
+                                <span className={styles.btListItemTimestamp}>{value.timestamp}</span>
+                                <span className={styles.btListItemValue}>{value.value}</span>
                             </li>) :
                             <li className={styles.btListItem}>No values received from mobile device</li>}
                     </ul>
@@ -116,8 +134,10 @@ function BluetoothView() {
             {!gattServer &&
                 <button className={styles.button} onClick={onConnectClick}>Connect to nearby
                     device</button>}
-            {gattServer &&
+            {gattServer && gattServer.connected &&
                 <button className={styles.button} onClick={onDisconnectClick}>Disconnect</button>}
+            {gattServer && !gattServer.connected &&
+                <button className={styles.button} onClick={onConnectClick}>Reconnect</button>}
         </>
     )
 }
