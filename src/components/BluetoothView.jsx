@@ -109,8 +109,11 @@ function BluetoothView() {
             {gattServer && <div className={styles.btListContainer}>
                 <ul className={styles.btList}>
                     <li className={styles.btListHeading}>GATT Server Information</li>
-                    <li className={styles.btListItem}><span className={styles.btListItemValue}>Device:</span><span
+                    <li className={styles.btListItem}><span className={styles.btListItemValue}>Device Name:</span><span
                         className={styles.btListItemValue}>{gattServer.device.name}</span>
+                    </li>
+                    <li className={styles.btListItem}><span className={styles.btListItemValue}>Device ID:</span><span
+                        className={styles.btListItemValue}>{gattServer.device.id}</span>
                     </li>
                     <li className={styles.btListItem}><span
                         className={styles.btListItemValue}>Status:</span>{gattServer.connected ?
