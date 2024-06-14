@@ -1,0 +1,261 @@
+[
+  {
+    "uuid": "1800",
+    "name": "GAP",
+    "id": "org.bluetooth.service.gap"
+  },
+  {
+    "uuid": "1801",
+    "name": "GATT",
+    "id": "org.bluetooth.service.gatt"
+  },
+  {
+    "uuid": "1802",
+    "name": "Immediate Alert",
+    "id": "org.bluetooth.service.immediate_alert"
+  },
+  {
+    "uuid": "1803",
+    "name": "Link Loss",
+    "id": "org.bluetooth.service.link_loss"
+  },
+  {
+    "uuid": "1804",
+    "name": "Tx Power",
+    "id": "org.bluetooth.service.tx_power"
+  },
+  {
+    "uuid": "1805",
+    "name": "Current Time",
+    "id": "org.bluetooth.service.current_time"
+  },
+  {
+    "uuid": "1806",
+    "name": "Reference Time Update",
+    "id": "org.bluetooth.service.reference_time_update"
+  },
+  {
+    "uuid": "1807",
+    "name": "Next DST Change",
+    "id": "org.bluetooth.service.next_dst_change"
+  },
+  {
+    "uuid": "1808",
+    "name": "Glucose",
+    "id": "org.bluetooth.service.glucose"
+  },
+  {
+    "uuid": "1809",
+    "name": "Health Thermometer",
+    "id": "org.bluetooth.service.health_thermometer"
+  },
+  {
+    "uuid": "180a",
+    "name": "Device Information",
+    "id": "org.bluetooth.service.device_information"
+  },
+  {
+    "uuid": "180d",
+    "name": "Heart Rate",
+    "id": "org.bluetooth.service.heart_rate"
+  },
+  {
+    "uuid": "180e",
+    "name": "Phone Alert Status",
+    "id": "org.bluetooth.service.phone_alert_status"
+  },
+  {
+    "uuid": "180f",
+    "name": "Battery",
+    "id": "org.bluetooth.service.battery_service"
+  },
+  {
+    "uuid": "1810",
+    "name": "Blood Pressure",
+    "id": "org.bluetooth.service.blood_pressure"
+  },
+  {
+    "uuid": "1811",
+    "name": "Alert Notification",
+    "id": "org.bluetooth.service.alert_notification"
+  },
+  {
+    "uuid": "1812",
+    "name": "Human Interface Device",
+    "id": "org.bluetooth.service.human_interface_device"
+  },
+  {
+    "uuid": "1813",
+    "name": "Scan Parameters",
+    "id": "org.bluetooth.service.scan_parameters"
+  },
+  {
+    "uuid": "1814",
+    "name": "Running Speed and Cadence",
+    "id": "org.bluetooth.service.running_speed_and_cadence"
+  },
+  {
+    "uuid": "1815",
+    "name": "Automation IO",
+    "id": "org.bluetooth.service.automation_io"
+  },
+  {
+    "uuid": "1816",
+    "name": "Cycling Speed and Cadence",
+    "id": "org.bluetooth.service.cycling_speed_and_cadence"
+  },
+  {
+    "uuid": "1818",
+    "name": "Cycling Power",
+    "id": "org.bluetooth.service.cycling_power"
+  },
+  {
+    "uuid": "1819",
+    "name": "Location and Navigation",
+    "id": "org.bluetooth.service.location_and_navigation"
+  },
+  {
+    "uuid": "181a",
+    "name": "Environmental Sensing",
+    "id": "org.bluetooth.service.environmental_sensing"
+  },
+  {
+    "uuid": "181b",
+    "name": "Body Composition",
+    "id": "org.bluetooth.service.body_composition"
+  },
+  {
+    "uuid": "181c",
+    "name": "User Data",
+    "id": "org.bluetooth.service.user_data"
+  },
+  {
+    "uuid": "181d",
+    "name": "Weight Scale",
+    "id": "org.bluetooth.service.weight_scale"
+  },
+  {
+    "uuid": "181e",
+    "name": "Bond Management",
+    "id": "org.bluetooth.service.bond_management"
+  },
+  {
+    "uuid": "181f",
+    "name": "Continuous Glucose Monitoring",
+    "id": "org.bluetooth.service.continuous_glucose_monitoring"
+  },
+  {
+    "uuid": "1820",
+    "name": "Internet Protocol Support",
+    "id": "org.bluetooth.service.internet_protocol_support"
+  },
+  {
+    "uuid": "1821",
+    "name": "Indoor Positioning",
+    "id": "org.bluetooth.service.indoor_positioning"
+  },
+  {
+    "uuid": "1822",
+    "name": "Pulse Oximeter",
+    "id": "org.bluetooth.service.pulse_oximeter"
+  },
+  {
+    "uuid": "1823",
+    "name": "HTTP Proxy",
+    "id": "org.bluetooth.service.http_proxy"
+  },
+  {
+    "uuid": "1824",
+    "name": "Transport Discovery",
+    "id": "org.bluetooth.service.transport_discovery"
+  },
+  {
+    "uuid": "1825",
+    "name": "Object Transfer",
+    "id": "org.bluetooth.service.object_transfer"
+  },
+  {
+    "uuid": "1826",
+    "name": "Fitness Machine",
+    "id": "org.bluetooth.service.fitness_machine"
+  },
+  {
+    "uuid": "1827",
+    "name": "Mesh Provisioning",
+    "id": "org.bluetooth.service.mesh_provisioning"
+  },
+  {
+    "uuid": "1828",
+    "name": "Mesh Proxy",
+    "id": "org.bluetooth.service.mesh_proxy"
+  },
+  {
+    "uuid": "1829",
+    "name": "Reconnection Configuration",
+    "id": "org.bluetooth.service.reconnection_configuration"
+  },
+  {
+    "uuid": "183a",
+    "name": "Insulin Delivery",
+    "id": "org.bluetooth.service.insulin_delivery"
+  },
+  {
+    "uuid": "183b",
+    "name": "Binary Sensor",
+    "id": "org.bluetooth.service.binary_sensor"
+  },
+  {
+    "uuid": "183c",
+    "name": "Emergency Configuration",
+    "id": "org.bluetooth.service.emergency_configuration"
+  },
+  {
+    "uuid": "183d",
+    "name": "Authorization Control",
+    "id": "org.bluetooth.service.authorization_control"
+  },
+  {
+    "uuid": "183e",
+    "name": "Physical Activity Monitor",
+    "id": "org.bluetooth.service.physical_activity_monitor"
+  },
+  {
+    "uuid": "183f",
+    "name": "Elapsed Time",
+    "id": "org.bluetooth.service.elapsed_time"
+  },
+  {
+    "uuid": "1840",
+    "name": "Generic Health Sensor",
+    "id": "org.bluetooth.service.generic_health_sensor"
+  },
+  {
+    "uuid": "1843",
+    "name": "Audio Input Control",
+    "id": "org.bluetooth.service.audio_input_control"
+  },
+  {
+    "uuid": "1844",
+    "name": "Volume Control",
+    "id": "org.bluetooth.service.volume_control"
+  },
+  {
+    "uuid": "1845",
+    "name": "Volume Offset Control",
+    "id": "org.bluetooth.service.volume_offset"
+  },
+  {
+    "uuid": "1846",
+    "name": "Coordinated Set Identification",
+    "id": "org.bluetooth.service.coordinated_set_identification"
+  },
+  {
+    "uuid": "1847",
+    "name": "Device Time",
+    "id": "org.bluetooth.service.device_time"
+  },
+  {
+    "uuid": "ab7f",
+    "name": "Custom Service"
+  }
+]

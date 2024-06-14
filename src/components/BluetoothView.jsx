@@ -1,59 +1,21 @@
 import React, {useEffect, useState} from "react";
 import styles from "@/components/BluetoothView.module.css";
+import GattServicesView, {getCharacteristicName} from "@/components/GattServicesView";
 
 function BluetoothView() {
     const [error, setError] = useState(null);
     const [gattServer, setGattServer] = useState(null);
-    const [gattService, setGattService] = useState(null);
-    const [gattCharacteristic, setGattCharacteristic] = useState(null);
-    const [characteristicValues, setCharacteristicValues] = useState([]);
+    const [availableServices, setAvailableServices] = useState([]);
+    const [characteristicValue, setCharacteristicValue] = useState(null);
 
     function onServerDisconnect(e) {
         setGattServer(e.target.gatt);
-        setGattService(null);
-        setGattCharacteristic(null);
-        setCharacteristicValues([]);
+        setCharacteristicValue(null);
     }
-
-    function onCharacteristicChanged(e) {
-        const now = new Date();
-        setCharacteristicValues((prev) => [...prev, {
-            timestamp: `${padDate(now.getDate())}-${padDate(now.getMonth() + 1)}-${padDate(now.getFullYear())}  ${padDate(now.getHours())}:${padDate(now.getMinutes())}:${padDate(now.getSeconds())}`,
-            value: decodeCharacteristicValue(e.target.value.buffer)
-        }]);
-    }
-
-    function padDate(date) {
-        return date.toString().padStart(2, "0");
-    }
-
-    useEffect(() => {
-        if (gattCharacteristic) {
-            gattCharacteristic.startNotifications().then(() => {
-                gattCharacteristic.addEventListener("characteristicvaluechanged", onCharacteristicChanged);
-            })
-
-
-            return () => {
-                gattCharacteristic.removeEventListener("characteristicvaluechanged", onCharacteristicChanged);
-            }
-        }
-    }, [gattCharacteristic]);
-
-    useEffect(() => {
-        if (gattService) {
-            gattService.getCharacteristic("0000aaa1-0000-1000-8000-aabbccddeeff").then((characteristic) => {
-                setGattCharacteristic(characteristic);
-            })
-        }
-    }, [gattService]);
 
     useEffect(() => {
         if (gattServer) {
             if (gattServer.connected) {
-                gattServer.getPrimaryService("0000aaa0-0000-1000-8000-aabbccddeeff").then((service) => {
-                    setGattService(service);
-                })
                 gattServer.device.addEventListener("gattserverdisconnected", onServerDisconnect);
             } else {
                 gattServer.device.removeEventListener("gattserverdisconnected", onServerDisconnect);
@@ -66,16 +28,33 @@ function BluetoothView() {
         }
     }, [gattServer]);
 
+    async function getServicesInServer(server) {
+        if (server) {
+            if (server.connected) {
+                const primaryServices = await server.getPrimaryServices();
+                const servicesList = await Promise.all(primaryServices.map(async (service) => {
+                    let result = {};
+                    result["uuid"] = service.uuid;
+                    const characteristics = await service.getCharacteristics();
+                    result["characteristics"] = characteristics.map((c) => c.uuid);
+
+                    return result;
+                }))
+                setAvailableServices(servicesList);
+            }
+        }
+    }
+
     async function onConnectClick() {
         try {
             if (navigator.bluetooth) {
                 if (!gattServer) {
                     const device = await navigator.bluetooth.requestDevice({
-                        acceptAllDevices: true,
-                        optionalServices: ["0000aaa0-0000-1000-8000-aabbccddeeff"]
+                        filters: [{services: ["device_information", "battery_service", 0x1844, 0xab7f]}]
                     });
                     const server = await device.gatt.connect();
                     setGattServer(server);
+                    await getServicesInServer(server);
                 } else {
                     setGattServer(null);
                     const server = await gattServer.connect();
@@ -97,10 +76,17 @@ function BluetoothView() {
 
     function decodeCharacteristicValue(value) {
         if (value) {
-            const decoder = new TextDecoder();
+            const decoder = new TextDecoder("utf-8");
             return decoder.decode(value);
         }
         return null;
+    }
+
+    async function onCharacteristicClick(serviceUuid, characteristicUuid) {
+        const service = await gattServer.getPrimaryService(serviceUuid);
+        const characteristic = await service.getCharacteristic(characteristicUuid);
+        const value = await characteristic.readValue();
+        setCharacteristicValue({ ...characteristicValue, [getCharacteristicName(characteristicUuid)]: decodeCharacteristicValue(value) });
     }
 
     return (
@@ -121,38 +107,20 @@ function BluetoothView() {
                         <span className={`${styles.notConnected} ${styles.btListItemValue}`}>Not Connected</span>}</li>
                 </ul>
             </div>}
-            {gattService && <div className={styles.btListContainer}>
-                <ul className={styles.btList}>
-                    <li className={styles.btListHeading}>GATT Service Information</li>
-                    <li className={styles.btListItem}><span className={styles.btListItemValue}>UUID:</span><span
-                        className={styles.btListItemValue}>{gattService.uuid}</span>
-                    </li>
-                </ul>
-            </div>}
-            {gattCharacteristic && <div>
+            {availableServices.length > 0 && <GattServicesView services={availableServices} onCharacteristicClick={onCharacteristicClick} />}
+            {characteristicValue && (
                 <div className={styles.btListContainer}>
                     <ul className={styles.btList}>
                         <li className={styles.btListHeading}>GATT Characteristic Information</li>
-                        <li className={styles.btListItem}><span className={styles.btListItemValue}>UUID:</span><span
-                            className={styles.btListItemValue}>{gattCharacteristic.uuid}</span>
-                        </li>
-                        <li className={styles.btListItem}><span className={styles.btListItemValue}>Value:</span><span
-                            className={styles.btListItemValue}>{decodeCharacteristicValue(gattCharacteristic.value)}</span>
-                        </li>
+                        {Object.entries(characteristicValue).map(([key, value]) => {
+                            return <li key={key} className={styles.btListItem}><span
+                                className={styles.btListItemValue}>{key}:</span><span
+                                className={styles.btListItemValue}>{value}</span>
+                            </li>
+                        })}
                     </ul>
                 </div>
-                <div className={styles.btListContainer}>
-                    <ul className={styles.btList}>
-                        <li className={styles.btListHeading}>Value log</li>
-                        {characteristicValues.length > 0 ? characteristicValues.map((value) => <li
-                                key={value.timestamp} className={styles.btListItem}>
-                                <span className={styles.btListItemTimestamp}>{value.timestamp}</span>
-                                <span className={styles.btListItemValue}>{value.value}</span>
-                            </li>) :
-                            <li className={styles.btListItem}>No values received from mobile device</li>}
-                    </ul>
-                </div>
-            </div>}
+            )}
             {!gattServer &&
                 <button className={styles.button} onClick={onConnectClick}>Connect to nearby
                     device</button>}
