@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 import styles from "@/components/BluetoothView.module.css";
 import GattServicesView, {getCharacteristicName} from "@/components/GattServicesView";
 
+const SERVICES_TO_SEARCH_FOR = [0xAB7F];
+
 function BluetoothView() {
     const [error, setError] = useState(null);
     const [gattServer, setGattServer] = useState(null);
@@ -36,7 +38,7 @@ function BluetoothView() {
                     let result = {};
                     result["uuid"] = service.uuid;
                     const characteristics = await service.getCharacteristics();
-                    result["characteristics"] = characteristics.map((c) => c.uuid);
+                    result["characteristics"] = characteristics.map((c) => ({ uuid: c.uuid, notify: c.properties.notify }));
 
                     return result;
                 }))
@@ -50,7 +52,7 @@ function BluetoothView() {
             if (navigator.bluetooth) {
                 if (!gattServer) {
                     const device = await navigator.bluetooth.requestDevice({
-                        filters: [{services: ["device_information", "battery_service", 0x1844, 0xab7f]}]
+                        filters: [{services: SERVICES_TO_SEARCH_FOR}]
                     });
                     const server = await device.gatt.connect();
                     setGattServer(server);
@@ -82,11 +84,30 @@ function BluetoothView() {
         return null;
     }
 
-    async function onCharacteristicClick(serviceUuid, characteristicUuid) {
+    const onCharacteristicValueChange = (e) => {
+        console.log("Value Changed:", e.target);
+        setCharacteristicValue({
+            ...characteristicValue,
+            [getCharacteristicName(e.target.uuid)]: decodeCharacteristicValue(e.target.value)
+        });
+    }
+
+    async function onCharacteristicRead(serviceUuid, characteristicUuid) {
         const service = await gattServer.getPrimaryService(serviceUuid);
         const characteristic = await service.getCharacteristic(characteristicUuid);
         const value = await characteristic.readValue();
-        setCharacteristicValue({ ...characteristicValue, [getCharacteristicName(characteristicUuid)]: decodeCharacteristicValue(value) });
+        setCharacteristicValue({
+            ...characteristicValue,
+            [getCharacteristicName(characteristicUuid)]: decodeCharacteristicValue(value)
+        });
+    }
+
+    async function onStartNotifications(serviceUuid, characteristicUuid) {
+        const service = await gattServer.getPrimaryService(serviceUuid);
+        const characteristic = await service.getCharacteristic(characteristicUuid);
+        await characteristic.startNotifications();
+        console.log("notifications started for:", getCharacteristicName(characteristicUuid));
+        characteristic.oncharacteristicvaluechanged = onCharacteristicValueChange;
     }
 
     return (
@@ -107,7 +128,8 @@ function BluetoothView() {
                         <span className={`${styles.notConnected} ${styles.btListItemValue}`}>Not Connected</span>}</li>
                 </ul>
             </div>}
-            {availableServices.length > 0 && <GattServicesView services={availableServices} onCharacteristicClick={onCharacteristicClick} />}
+            {availableServices.length > 0 &&
+                <GattServicesView services={availableServices} onRead={onCharacteristicRead} onNotificationsStart={onStartNotifications}/>}
             {characteristicValue && (
                 <div className={styles.btListContainer}>
                     <ul className={styles.btList}>

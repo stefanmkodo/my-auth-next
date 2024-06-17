@@ -13,18 +13,24 @@ export function getCharacteristicName(characteristicUuid) {
     return BLUETOOTH_CHARACTERISTICS.find((c) => c.uuid.toLowerCase() === uuidToFind)?.name ?? characteristicUuid;
 }
 
-const GattServicesView = ({services, onCharacteristicClick}) => {
+function formatUUID(uuid) {
+    return uuid.endsWith("-0000-1000-8000-00805f9b34fb") ? `0x${uuid.split("-")[0].slice(-4)}` : uuid;
+}
+
+const GattServicesView = ({services, onRead, onNotificationsStart }) => {
     return (
         <>
             <h2>Available GATT Services</h2>
             {services.map((service, index) => {
                 return <div key={index} className={styles.btListContainer}>
                     <ul className={styles.btList}>
-                        <li className={styles.btListHeading}>{getServiceName(service.uuid)}</li>
+                        <li className={styles.btListHeading}>{`${getServiceName(service.uuid)} (${formatUUID(service.uuid)})`}</li>
                         {service.characteristics && service.characteristics.map((c) => {
-                            return <button onClick={() => onCharacteristicClick(service.uuid, c)} key={c} className={styles.btListItem}>
-                            <span>{getCharacteristicName(c)}</span>
-                        </button>})}
+                            return <div key={c.uuid} className={`${styles.btListItem} ${styles.characteristicRow}`}>
+                            <span>{`${getCharacteristicName(c.uuid)} (${formatUUID(c.uuid)})`}</span>
+                                <button className={`${styles.button} ${styles.table}`} onClick={() => onRead(service.uuid, c.uuid)}>READ</button>
+                                {c.notify && <button className={`${styles.button} ${styles.table}`} onClick={() => onNotificationsStart(service.uuid, c.uuid)}>NOTIFY</button>}
+                        </div>})}
                     </ul>
                 </div>
             })}

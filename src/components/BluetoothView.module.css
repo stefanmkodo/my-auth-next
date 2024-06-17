@@ -23,6 +23,7 @@
     width: 100%;
     justify-content: center;
     text-align: center;
+    align-items: center;
 }
 
 .btListItemTimestamp, .btListItemValue {
@@ -36,6 +37,15 @@
 .button {
     margin: 20px 0;
     background-color: #EE1753;
+}
+
+.button.table {
+    margin: 8px 0;
+    padding: 4px 8px;
+}
+
+.characteristicRow {
+    gap: 8px;
 }
 
 .connected {
