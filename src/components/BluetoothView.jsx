@@ -65,6 +65,7 @@ function BluetoothView() {
                         setGattServer(null);
                         const server = await gattServer.connect();
                         setGattServer(server);
+                        await getServicesInServer(server);
                     }
                 } else {
                     setError("Bluetooth not supported on this device")
