@@ -13,10 +13,12 @@ function BluetoothView() {
     function onServerDisconnect(e) {
         setGattServer(e.target.gatt);
         setCharacteristicValue(null);
+        setAvailableServices([]);
     }
 
     useEffect(() => {
         if (gattServer) {
+            setError(null);
             if (gattServer.connected) {
                 gattServer.device.addEventListener("gattserverdisconnected", onServerDisconnect);
             } else {
@@ -50,20 +52,25 @@ function BluetoothView() {
     async function onConnectClick() {
         try {
             if (navigator.bluetooth) {
-                if (!gattServer) {
-                    const device = await navigator.bluetooth.requestDevice({
-                        filters: [{services: SERVICES_TO_SEARCH_FOR}]
-                    });
-                    const server = await device.gatt.connect();
-                    setGattServer(server);
-                    await getServicesInServer(server);
+                const isBluetoothAvailable = await navigator.bluetooth.getAvailability();
+                if (isBluetoothAvailable) {
+                    if (!gattServer) {
+                        const device = await navigator.bluetooth.requestDevice({
+                            filters: [{services: SERVICES_TO_SEARCH_FOR}]
+                        });
+                        const server = await device.gatt.connect();
+                        setGattServer(server);
+                        await getServicesInServer(server);
+                    } else {
+                        setGattServer(null);
+                        const server = await gattServer.connect();
+                        setGattServer(server);
+                    }
                 } else {
-                    setGattServer(null);
-                    const server = await gattServer.connect();
-                    setGattServer(server);
+                    setError("Bluetooth not supported on this device")
                 }
             } else {
-                setError("Bluetooth not supported");
+                setError("Bluetooth not supported in this browser");
             }
         } catch (e) {
             setError(e.message);
@@ -85,20 +92,34 @@ function BluetoothView() {
     }
 
     const onCharacteristicValueChange = (e) => {
-        console.log("Value Changed:", e.target);
+        const receivedTimestamp = formatDate(new Date());
         setCharacteristicValue({
             ...characteristicValue,
-            [getCharacteristicName(e.target.uuid)]: decodeCharacteristicValue(e.target.value)
+            [getCharacteristicName(e.target.uuid)]: { value: decodeCharacteristicValue(e.target.value), timestamp: receivedTimestamp }
+        });
+    }
+
+    function formatDate(date) {
+        return date.toLocaleString("en-GB", {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            fractionalSecondDigits: 3,
+            hour12: false,
         });
     }
 
     async function onCharacteristicRead(serviceUuid, characteristicUuid) {
+        const receivedTimestamp = formatDate(new Date());
         const service = await gattServer.getPrimaryService(serviceUuid);
         const characteristic = await service.getCharacteristic(characteristicUuid);
         const value = await characteristic.readValue();
         setCharacteristicValue({
             ...characteristicValue,
-            [getCharacteristicName(characteristicUuid)]: decodeCharacteristicValue(value)
+            [getCharacteristicName(characteristicUuid)]: { value: decodeCharacteristicValue(value), timestamp: receivedTimestamp }
         });
     }
 
@@ -135,9 +156,10 @@ function BluetoothView() {
                     <ul className={styles.btList}>
                         <li className={styles.btListHeading}>GATT Characteristic Information</li>
                         {Object.entries(characteristicValue).map(([key, value]) => {
-                            return <li key={key} className={styles.btListItem}><span
-                                className={styles.btListItemValue}>{key}:</span><span
-                                className={styles.btListItemValue}>{value}</span>
+                            return <li key={key} className={styles.btListItem}>
+                                <span className={styles.btListItemValue}>{key}:</span>
+                                <span className={styles.btListItemValue}>{value.value}</span>
+                                <span className={styles.btListItemValue}>{value.timestamp}</span>
                             </li>
                         })}
                     </ul>
