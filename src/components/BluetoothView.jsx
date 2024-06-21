@@ -132,6 +132,19 @@ function BluetoothView() {
         characteristic.oncharacteristicvaluechanged = onCharacteristicValueChange;
     }
 
+    async function onWrite(serviceUuid, characteristicUuid, value) {
+        const service = await gattServer.getPrimaryService(serviceUuid);
+        const characteristic = await service.getCharacteristic(characteristicUuid);
+        const valueToWrite = new TextEncoder().encode(value);
+        const receivedTimestamp = formatDate(new Date());
+        await characteristic.writeValueWithResponse(valueToWrite);
+        const readValue = await characteristic.readValue();
+        setCharacteristicValue({
+            ...characteristicValue,
+            [getCharacteristicName(characteristicUuid)]: { value: decodeCharacteristicValue(readValue), timestamp: receivedTimestamp }
+        });
+    }
+
     return (
         <>
             {error && <p>{error}</p>}
@@ -151,7 +164,7 @@ function BluetoothView() {
                 </ul>
             </div>}
             {availableServices.length > 0 &&
-                <GattServicesView services={availableServices} onRead={onCharacteristicRead} onNotificationsStart={onStartNotifications}/>}
+                <GattServicesView services={availableServices} onRead={onCharacteristicRead} onNotificationsStart={onStartNotifications} onWrite={onWrite}/>}
             {characteristicValue && (
                 <div className={styles.btListContainer}>
                     <ul className={styles.btList}>
