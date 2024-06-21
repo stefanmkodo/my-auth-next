@@ -40,7 +40,7 @@ function BluetoothView() {
                     let result = {};
                     result["uuid"] = service.uuid;
                     const characteristics = await service.getCharacteristics();
-                    result["characteristics"] = characteristics.map((c) => ({ uuid: c.uuid, notify: c.properties.notify }));
+                    result["characteristics"] = characteristics.map((c) => ({ uuid: c.uuid, properties: c.properties }));
 
                     return result;
                 }))

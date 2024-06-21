@@ -28,8 +28,8 @@ const GattServicesView = ({services, onRead, onNotificationsStart }) => {
                         {service.characteristics && service.characteristics.map((c) => {
                             return <div key={c.uuid} className={`${styles.btListItem} ${styles.characteristicRow}`}>
                             <span>{`${getCharacteristicName(c.uuid)} (${formatUUID(c.uuid)})`}</span>
-                                <button className={`${styles.button} ${styles.table}`} onClick={() => onRead(service.uuid, c.uuid)}>READ</button>
-                                {c.notify && <button className={`${styles.button} ${styles.table}`} onClick={() => onNotificationsStart(service.uuid, c.uuid)}>NOTIFY</button>}
+                                {c.properties.read && <button className={`${styles.button} ${styles.table}`} onClick={() => onRead(service.uuid, c.uuid)}>READ</button>}
+                                {c.properties.notify && <button className={`${styles.button} ${styles.table}`} onClick={() => onNotificationsStart(service.uuid, c.uuid)}>NOTIFY</button>}
                         </div>})}
                     </ul>
                 </div>
