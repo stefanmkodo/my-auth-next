@@ -36,10 +36,12 @@ function BluetoothView() {
         if (server) {
             if (server.connected) {
                 const primaryServices = await server.getPrimaryServices();
+                console.log("Primary services:", primaryServices);
                 const servicesList = await Promise.all(primaryServices.map(async (service) => {
                     let result = {};
                     result["uuid"] = service.uuid;
                     const characteristics = await service.getCharacteristics();
+                    console.log("Characteristics:", characteristics);
                     result["characteristics"] = characteristics.map((c) => ({ uuid: c.uuid, properties: c.properties }));
 
                     return result;
@@ -74,6 +76,7 @@ function BluetoothView() {
                 setError("Bluetooth not supported in this browser");
             }
         } catch (e) {
+            console.error("Thrown in try/catch of onConnectClick", e.message);
             setError(e.message);
         }
     }
