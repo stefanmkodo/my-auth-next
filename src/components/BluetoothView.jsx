@@ -8,11 +8,11 @@ function BluetoothView() {
     const [error, setError] = useState(null);
     const [gattServer, setGattServer] = useState(null);
     const [availableServices, setAvailableServices] = useState([]);
-    const [characteristicValue, setCharacteristicValue] = useState(null);
+    const [valueLog, setValueLog] = useState([]);
 
     function onServerDisconnect(e) {
         setGattServer(e.target.gatt);
-        setCharacteristicValue(null);
+        setValueLog([]);
         setAvailableServices([]);
     }
 
@@ -97,10 +97,7 @@ function BluetoothView() {
 
     const onCharacteristicValueChange = (e) => {
         const receivedTimestamp = formatDate(new Date());
-        setCharacteristicValue({
-            ...characteristicValue,
-            [getCharacteristicName(e.target.uuid)]: { value: decodeCharacteristicValue(e.target.value), timestamp: receivedTimestamp }
-        });
+        setValueLog([...valueLog, { cName: getCharacteristicName(e.target.uuid), cValue: decodeCharacteristicValue(e.target.value), cTimestamp: receivedTimestamp, method: "NOTIFY" }]);
     }
 
     function formatDate(date) {
@@ -121,10 +118,7 @@ function BluetoothView() {
         const service = await gattServer.getPrimaryService(serviceUuid);
         const characteristic = await service.getCharacteristic(characteristicUuid);
         const value = await characteristic.readValue();
-        setCharacteristicValue({
-            ...characteristicValue,
-            [getCharacteristicName(characteristicUuid)]: { value: decodeCharacteristicValue(value), timestamp: receivedTimestamp }
-        });
+        setValueLog([...valueLog, { cName: getCharacteristicName(characteristicUuid), cValue: decodeCharacteristicValue(value), cTimestamp: receivedTimestamp, method: "READ" }]);
     }
 
     async function onStartNotifications(serviceUuid, characteristicUuid) {
@@ -142,10 +136,7 @@ function BluetoothView() {
         const receivedTimestamp = formatDate(new Date());
         await characteristic.writeValueWithResponse(valueToWrite);
         const readValue = await characteristic.readValue();
-        setCharacteristicValue({
-            ...characteristicValue,
-            [getCharacteristicName(characteristicUuid)]: { value: decodeCharacteristicValue(readValue), timestamp: receivedTimestamp }
-        });
+        setValueLog([...valueLog, { cName: getCharacteristicName(characteristicUuid), cValue: decodeCharacteristicValue(readValue), cTimestamp: receivedTimestamp, method: "WRITE" }]);
     }
 
     return (
@@ -168,15 +159,16 @@ function BluetoothView() {
             </div>}
             {availableServices.length > 0 &&
                 <GattServicesView services={availableServices} onRead={onCharacteristicRead} onNotificationsStart={onStartNotifications} onWrite={onWrite}/>}
-            {characteristicValue && (
+            {valueLog.length > 0 && (
                 <div className={styles.btListContainer}>
                     <ul className={styles.btList}>
                         <li className={styles.btListHeading}>GATT Characteristic Information</li>
-                        {Object.entries(characteristicValue).map(([key, value]) => {
-                            return <li key={key} className={styles.btListItem}>
-                                <span className={styles.btListItemValue}>{key}:</span>
-                                <span className={styles.btListItemValue}>{value.value}</span>
-                                <span className={styles.btListItemValue}>{value.timestamp}</span>
+                        {valueLog.map(({ cName, cValue, cTimestamp, method }) => {
+                            return <li key={`${cName}-${cTimestamp}`} className={styles.btListItem}>
+                                <span className={styles.btListItemValue}>{cName}:</span>
+                                <span className={styles.btListItemValue}>{cValue}</span>
+                                <span className={styles.btListItemValue}>{method}</span>
+                                <span className={styles.btListItemValue}>{cTimestamp}</span>
                             </li>
                         })}
                     </ul>
