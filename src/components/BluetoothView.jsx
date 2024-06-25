@@ -145,13 +145,11 @@ function BluetoothView() {
         const valueToWrite = new TextEncoder().encode(value);
         const receivedTimestamp = formatDate(new Date());
         await characteristic.writeValueWithResponse(valueToWrite);
-        if (!characteristic.properties.notify) {
-            setValueLog((prev) => [...prev, {
-                cName: getCharacteristicName(characteristicUuid),
-                cValue: decodeCharacteristicValue(value),
-                cTimestamp: receivedTimestamp
-            }]);
-        }
+        setValueLog((prev) => [...prev, {
+            cName: getCharacteristicName(characteristicUuid),
+            cValue: value,
+            cTimestamp: receivedTimestamp
+        }]);
     }
 
     return (
