@@ -10,16 +10,14 @@ const LogTable = ({log}) => {
                 <tr className={styles.logTableHeader}>
                     <th>Name</th>
                     <th>Value</th>
-                    <th>Method</th>
                     <th>Timestamp</th>
                 </tr>
                 </thead>
                 <tbody>
-                {log.map(({cName, cValue, cTimestamp, method}) => {
+                {log.map(({cName, cValue, cTimestamp}) => {
                     return <tr key={`${cName}-${cTimestamp}`} className={styles.logTableRow}>
                         <td className={styles.logTableData}>{cName}</td>
                         <td className={styles.logTableData}>{cValue}</td>
-                        <td className={styles.logTableData}>{method}</td>
                         <td className={styles.logTableData}>{cTimestamp}</td>
                     </tr>
                 })}

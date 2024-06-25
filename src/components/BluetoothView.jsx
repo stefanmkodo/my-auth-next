@@ -43,7 +43,14 @@ function BluetoothView() {
                     result["uuid"] = service.uuid;
                     const characteristics = await service.getCharacteristics();
                     console.log("Characteristics:", characteristics);
-                    result["characteristics"] = characteristics.map((c) => ({ uuid: c.uuid, properties: c.properties }));
+                    result["characteristics"] = await Promise.all(characteristics.map(async (c) => {
+                        if (c.properties.notify) {
+                            await c.startNotifications();
+                            console.log("Notifications started for: ", getCharacteristicName(c.uuid));
+                            c.oncharacteristicvaluechanged = onCharacteristicValueChange;
+                        }
+                        return ({uuid: c.uuid, properties: c.properties})
+                    }));
 
                     return result;
                 }))
@@ -98,7 +105,11 @@ function BluetoothView() {
 
     const onCharacteristicValueChange = (e) => {
         const receivedTimestamp = formatDate(new Date());
-        setValueLog([...valueLog, { cName: getCharacteristicName(e.target.uuid), cValue: decodeCharacteristicValue(e.target.value), cTimestamp: receivedTimestamp, method: "NOTIFY" }]);
+        setValueLog((prev) => [...prev, {
+            cName: getCharacteristicName(e.target.uuid),
+            cValue: decodeCharacteristicValue(e.target.value),
+            cTimestamp: receivedTimestamp
+        }]);
     }
 
     function formatDate(date) {
@@ -119,15 +130,13 @@ function BluetoothView() {
         const service = await gattServer.getPrimaryService(serviceUuid);
         const characteristic = await service.getCharacteristic(characteristicUuid);
         const value = await characteristic.readValue();
-        setValueLog([...valueLog, { cName: getCharacteristicName(characteristicUuid), cValue: decodeCharacteristicValue(value), cTimestamp: receivedTimestamp, method: "READ" }]);
-    }
-
-    async function onStartNotifications(serviceUuid, characteristicUuid) {
-        const service = await gattServer.getPrimaryService(serviceUuid);
-        const characteristic = await service.getCharacteristic(characteristicUuid);
-        await characteristic.startNotifications();
-        console.log("notifications started for:", getCharacteristicName(characteristicUuid));
-        characteristic.oncharacteristicvaluechanged = onCharacteristicValueChange;
+        if (!characteristic.properties.notify) {
+            setValueLog((prev) => [...prev, {
+                cName: getCharacteristicName(characteristicUuid),
+                cValue: decodeCharacteristicValue(value),
+                cTimestamp: receivedTimestamp
+            }]);
+        }
     }
 
     async function onWrite(serviceUuid, characteristicUuid, value) {
@@ -137,7 +146,13 @@ function BluetoothView() {
         const receivedTimestamp = formatDate(new Date());
         await characteristic.writeValueWithResponse(valueToWrite);
         const readValue = await characteristic.readValue();
-        setValueLog([...valueLog, { cName: getCharacteristicName(characteristicUuid), cValue: decodeCharacteristicValue(readValue), cTimestamp: receivedTimestamp, method: "WRITE" }]);
+        if (!characteristic.properties.notify) {
+            setValueLog((prev) => [...prev, {
+                cName: getCharacteristicName(characteristicUuid),
+                cValue: decodeCharacteristicValue(readValue),
+                cTimestamp: receivedTimestamp
+            }]);
+        }
     }
 
     return (
@@ -159,8 +174,8 @@ function BluetoothView() {
                 </ul>
             </div>}
             {availableServices.length > 0 &&
-                <GattServicesView services={availableServices} onRead={onCharacteristicRead} onNotificationsStart={onStartNotifications} onWrite={onWrite}/>}
-            {valueLog.length > 0 && <LogTable log={valueLog} />}
+                <GattServicesView services={availableServices} onRead={onCharacteristicRead} onWrite={onWrite}/>}
+            {valueLog.length > 0 && <LogTable log={valueLog}/>}
             {!gattServer &&
                 <button className={styles.button} onClick={onConnectClick}>Connect to nearby
                     device</button>}

@@ -17,7 +17,7 @@ function formatUUID(uuid) {
     return uuid.endsWith("-0000-1000-8000-00805f9b34fb") ? `0x${uuid.split("-")[0].slice(-4)}` : uuid;
 }
 
-const GattServicesView = ({services, onRead, onNotificationsStart, onWrite}) => {
+const GattServicesView = ({services, onRead, onWrite}) => {
     const [writeValue, setWriteValue] = useState({serviceUuid: null, characteristicUuid: null, value: ""});
     const [isWritePopupVisible, setIsWritePopupVisible] = useState(false);
 
@@ -44,8 +44,6 @@ const GattServicesView = ({services, onRead, onNotificationsStart, onWrite}) => 
                                 <span>{`${getCharacteristicName(c.uuid)} (${formatUUID(c.uuid)})`}</span>
                                 {c.properties.read && <button className={`${styles.button} ${styles.table}`}
                                                               onClick={() => onRead(service.uuid, c.uuid)}>READ</button>}
-                                {c.properties.notify && <button className={`${styles.button} ${styles.table}`}
-                                                                onClick={() => onNotificationsStart(service.uuid, c.uuid)}>NOTIFY</button>}
                                 {(c.properties.write || c.properties.writeWithoutResponse) &&
                                     <button className={`${styles.button} ${styles.table}`}
                                             onClick={() => onWriteClick(service.uuid, c.uuid)}>WRITE</button>}
