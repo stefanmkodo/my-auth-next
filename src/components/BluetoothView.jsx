@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import styles from "@/components/BluetoothView.module.css";
 import GattServicesView, {getCharacteristicName} from "@/components/GattServicesView";
+import LogTable from "@/components/LogTable";
 
 const SERVICES_TO_SEARCH_FOR = [0xAB7F];
 
@@ -159,21 +160,7 @@ function BluetoothView() {
             </div>}
             {availableServices.length > 0 &&
                 <GattServicesView services={availableServices} onRead={onCharacteristicRead} onNotificationsStart={onStartNotifications} onWrite={onWrite}/>}
-            {valueLog.length > 0 && (
-                <div className={styles.btListContainer}>
-                    <ul className={styles.btList}>
-                        <li className={styles.btListHeading}>GATT Characteristic Information</li>
-                        {valueLog.map(({ cName, cValue, cTimestamp, method }) => {
-                            return <li key={`${cName}-${cTimestamp}`} className={styles.btListItem}>
-                                <span className={styles.btListItemValue}>{cName}:</span>
-                                <span className={styles.btListItemValue}>{cValue}</span>
-                                <span className={styles.btListItemValue}>{method}</span>
-                                <span className={styles.btListItemValue}>{cTimestamp}</span>
-                            </li>
-                        })}
-                    </ul>
-                </div>
-            )}
+            {valueLog.length > 0 && <LogTable log={valueLog} />}
             {!gattServer &&
                 <button className={styles.button} onClick={onConnectClick}>Connect to nearby
                     device</button>}

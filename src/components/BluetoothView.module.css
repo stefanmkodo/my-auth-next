@@ -72,3 +72,28 @@
     width: 400px;
     margin-bottom: 16px;
 }
+
+.logTableHeader {
+    background-color: #EE1753;
+    font-weight: bold;
+    color: white;
+}
+
+.logTableRow {
+    background: #373a52;
+    padding: 2px 8px;
+}
+
+.logTableRow:nth-child(odd) {
+    background: #1e2031;
+}
+
+.logTable {
+    width: 800px;
+    border-collapse: collapse;
+    margin-bottom: 32px;
+}
+
+.logTableData {
+    width: 200px;
+}
